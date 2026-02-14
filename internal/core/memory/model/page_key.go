@@ -8,6 +8,7 @@ type PageKey struct {
 func (key *PageKey) FileID() string {
 	return key.fileID
 }
+
 func (key *PageKey) PageID() int {
 	return key.pageID
 }

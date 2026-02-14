@@ -5,8 +5,6 @@ type Page interface {
 	PageID() int
 	Size() int
 	IsValid() bool
-
 	Read(int) ([]byte, error)
-
 	Write([]byte) error
 }

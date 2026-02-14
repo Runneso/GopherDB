@@ -1,7 +1,5 @@
 package model
 
-type DataType int
-
 type HeapTuple struct {
 	data []byte
 	dt   DataType
