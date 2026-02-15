@@ -8,6 +8,8 @@ import (
 	memmodel "GopherDB/internal/core/memory/model"
 	"GopherDB/internal/core/memory/page"
 	"GopherDB/internal/core/memory/serializer"
+	"fmt"
+	"strings"
 )
 
 type TableHeap struct {
@@ -146,6 +148,9 @@ func (heap *TableHeap) serializeRow(values []any) ([]byte, error) {
 			return nil, err
 		}
 		dt := heap.typeNameToDataType(typeDef.Name())
+		if dt == 0 {
+			return nil, fmt.Errorf("unknown type: name=%q oid=%d", typeDef.Name(), typeDef.Oid())
+		}
 		tuple, err := heap.serializer.Serialize(values[i], dt)
 		if err != nil {
 			return nil, err
@@ -166,6 +171,9 @@ func (heap *TableHeap) deserializeRow(data []byte) ([]any, error) {
 		}
 
 		dt := heap.typeNameToDataType(typeDef.Name())
+		if dt == 0 {
+			return nil, fmt.Errorf("unknown type: name=%q oid=%d", typeDef.Name(), typeDef.Oid())
+		}
 		length := heap.getFieldLength(dt, data[offset:])
 		fieldData := data[offset : offset+length]
 
@@ -193,13 +201,15 @@ func (heap *TableHeap) getFieldLength(dt memmodel.DataType, data []byte) int {
 }
 
 func (heap *TableHeap) typeNameToDataType(name string) memmodel.DataType {
-	if name == "INT64" {
+	normalized := strings.ToUpper(strings.TrimSpace(strings.TrimRight(name, "\x00")))
+	switch normalized {
+	case "INT64", "INT", "INTEGER":
 		return memmodel.INT64
-	}
-	if name == "VARCHAR" {
+	case "VARCHAR":
 		return memmodel.VARCHAR
+	default:
+		return 0
 	}
-	return 0
 }
 
 func (heap *TableHeap) pageKey(pageID int) memmodel.PageKey {
