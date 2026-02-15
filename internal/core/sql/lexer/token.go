@@ -43,3 +43,7 @@ func (token *Token) Line() int {
 func (token *Token) Column() int {
 	return token.column
 }
+
+func (token *Token) String() string {
+	return token.tokenType.String() + "(" + token.text + ")"
+}
