@@ -62,7 +62,7 @@ func createCreateTable(f *DefaultExecutorFactory, plan nodes.PhysicalPlanNode) (
 }
 
 func createCreateIndex(f *DefaultExecutorFactory, plan nodes.PhysicalPlanNode) (executors.Executor, error) {
-	return executors.NewCreateIndexExecutor(f.catalog, plan.(*nodes.CreateIndexNode).Query()), nil
+	return executors.NewCreateIndexExecutor(f.root, f.bufferPool, f.catalog, f.indexManager, plan.(*nodes.CreateIndexNode).Query()), nil
 }
 
 func createInsert(f *DefaultExecutorFactory, plan nodes.PhysicalPlanNode) (executors.Executor, error) {
@@ -71,7 +71,7 @@ func createInsert(f *DefaultExecutorFactory, plan nodes.PhysicalPlanNode) (execu
 	if err != nil {
 		return nil, err
 	}
-	return executors.NewInsertExecutor(tableHeap, query), nil
+	return executors.NewInsertExecutor(f.catalog, f.indexManager, tableHeap, query), nil
 }
 
 func createProject(f *DefaultExecutorFactory, plan nodes.PhysicalPlanNode) (executors.Executor, error) {
