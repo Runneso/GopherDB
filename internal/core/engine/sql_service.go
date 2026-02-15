@@ -18,8 +18,6 @@ type SqlService struct {
 	catalog      manager.CatalogManager
 	indexManager *index.IndexManager
 
-	lexer           *lexer.SqlLexer
-	parser          *parser.SqlParser
 	analyzer        *semantic.Analyzer
 	planner         planner.Planner
 	optimizer       optimizer.Optimizer
@@ -33,8 +31,6 @@ func NewSqlService(root string, bufferPool buffer.BufferPoolManager, catalog man
 		bufferPool:      bufferPool,
 		catalog:         catalog,
 		indexManager:    indexManager,
-		lexer:           lexer.NewSqlLexer(),
-		parser:          parser.NewSqlParser(),
 		analyzer:        semantic.NewAnalyzer(catalog),
 		planner:         planner.NewDefaultPlanner(),
 		optimizer:       optimizer.NewDefaultOptimizer(catalog),
@@ -50,12 +46,15 @@ func (service *SqlService) Execute(sql string) (*ExecutionResult, error) {
 func (service *SqlService) ExecuteWithContext(ctx *SessionContext, sql string) (*ExecutionResult, error) {
 	trace := ctx != nil && ctx.Trace()
 
-	tokens, err := service.lexer.Tokenize(sql)
+	lex := lexer.NewSqlLexer()
+	prs := parser.NewSqlParser()
+
+	tokens, err := lex.Tokenize(sql)
 	if err != nil {
 		return nil, err
 	}
 
-	stmt, err := service.parser.Parse(tokens)
+	stmt, err := prs.Parse(tokens)
 	if err != nil {
 		return nil, err
 	}
