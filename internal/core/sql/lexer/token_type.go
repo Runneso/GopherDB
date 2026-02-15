@@ -54,3 +54,46 @@ const (
 	GT
 	GE
 )
+
+var tokenTypeNames = [...]string{
+	EOF:       "EOF",
+	IDENT:     "IDENT",
+	NUMBER:    "NUMBER",
+	STRING:    "STRING",
+	CREATE:    "CREATE",
+	TABLE:     "TABLE",
+	INDEX:     "INDEX",
+	ON:        "ON",
+	USING:     "USING",
+	HASH:      "HASH",
+	BTREE:     "BTREE",
+	INSERT:    "INSERT",
+	INTO:      "INTO",
+	VALUES:    "VALUES",
+	SELECT:    "SELECT",
+	FROM:      "FROM",
+	WHERE:     "WHERE",
+	AND:       "AND",
+	OR:        "OR",
+	EXPLAIN:   "EXPLAIN",
+	INT64:     "INT64",
+	VARCHAR:   "VARCHAR",
+	LPAREN:    "LPAREN",
+	RPAREN:    "RPAREN",
+	COMMA:     "COMMA",
+	SEMICOLON: "SEMICOLON",
+	ASTERISK:  "ASTERISK",
+	EQ:        "EQ",
+	NE:        "NE",
+	LT:        "LT",
+	LE:        "LE",
+	GT:        "GT",
+	GE:        "GE",
+}
+
+func (token TokenType) String() string {
+	if int(token) < len(tokenTypeNames) {
+		return tokenTypeNames[token]
+	}
+	return "UNKNOWN"
+}
