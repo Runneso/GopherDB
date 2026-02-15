@@ -1,14 +1,14 @@
-package index
+package types
 
 type IndexType int
 
 const (
-	HASH IndexType = iota
-	BTREE
+	IndexTypeHash IndexType = iota
+	IndexTypeBTree
 )
 
-func (typ IndexType) Ordinal() int {
-	return int(typ)
+func (t IndexType) Ordinal() int {
+	return int(t)
 }
 
 func IndexTypeFromOrdinal(ordinal int) IndexType {

@@ -2,7 +2,7 @@ package manager
 
 import (
 	"GopherDB/internal/core/catalog/model"
-	"GopherDB/internal/core/index"
+	"GopherDB/internal/core/types"
 )
 
 type CatalogManager interface {
@@ -14,7 +14,7 @@ type CatalogManager interface {
 	GetTypeByOid(oid int32) (*model.TypeDefinition, error)
 	GetTypeByName(name string) (*model.TypeDefinition, error)
 	UpdatePagesCount(table *model.TableDefinition, pagesCount int32) error
-	CreateIndex(indexName, tableName, columnName string, indexType index.IndexType) (*model.IndexDefinition, error)
+	CreateIndex(indexName, tableName, columnName string, indexType types.IndexType) (*model.IndexDefinition, error)
 	GetIndex(indexName string) (*model.IndexDefinition, error)
 	ListIndexes(table *model.TableDefinition) ([]*model.IndexDefinition, error)
 }

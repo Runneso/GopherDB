@@ -9,10 +9,10 @@ import (
 	"sync"
 
 	"GopherDB/internal/core/catalog/model"
-	"GopherDB/internal/core/index"
 	"GopherDB/internal/core/memory/buffer"
 	memmodel "GopherDB/internal/core/memory/model"
 	"GopherDB/internal/core/memory/page"
+	"GopherDB/internal/core/types"
 )
 
 const (
@@ -223,7 +223,7 @@ func (defaultCatalogManager *DefaultCatalogManager) UpdatePagesCount(table *mode
 	return defaultCatalogManager.appendRecord(tablesFile, data)
 }
 
-func (defaultCatalogManager *DefaultCatalogManager) CreateIndex(indexName, tableName, columnName string, indexType index.IndexType) (*model.IndexDefinition, error) {
+func (defaultCatalogManager *DefaultCatalogManager) CreateIndex(indexName, tableName, columnName string, indexType types.IndexType) (*model.IndexDefinition, error) {
 	defaultCatalogManager.mu.Lock()
 	defer defaultCatalogManager.mu.Unlock()
 

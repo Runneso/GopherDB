@@ -2,18 +2,18 @@ package semantic
 
 import (
 	"GopherDB/internal/core/catalog/model"
-	"GopherDB/internal/core/index"
 	"GopherDB/internal/core/sql/ast"
+	"GopherDB/internal/core/types"
 )
 
 type CreateIndexQueryTree struct {
 	indexName *ast.SqlIdent
 	table     *model.TableDefinition
 	column    *model.ColumnDefinition
-	indexType index.IndexType
+	indexType types.IndexType
 }
 
-func NewCreateIndexQueryTree(indexName *ast.SqlIdent, table *model.TableDefinition, column *model.ColumnDefinition, indexType index.IndexType) *CreateIndexQueryTree {
+func NewCreateIndexQueryTree(indexName *ast.SqlIdent, table *model.TableDefinition, column *model.ColumnDefinition, indexType types.IndexType) *CreateIndexQueryTree {
 	return &CreateIndexQueryTree{
 		indexName: indexName,
 		table:     table,
@@ -38,6 +38,6 @@ func (query *CreateIndexQueryTree) Column() *model.ColumnDefinition {
 	return query.column
 }
 
-func (query *CreateIndexQueryTree) IndexType() index.IndexType {
+func (query *CreateIndexQueryTree) IndexType() types.IndexType {
 	return query.indexType
 }

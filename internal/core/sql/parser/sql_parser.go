@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"strings"
 
-	"GopherDB/internal/core/index"
 	"GopherDB/internal/core/sql/ast"
 	"GopherDB/internal/core/sql/lexer"
+	"GopherDB/internal/core/types"
 )
 
 type stmtParser func() (ast.Statement, error)
@@ -18,7 +18,7 @@ type SqlParser struct {
 	stmtParsers   map[lexer.TokenType]stmtParser
 	createParsers map[lexer.TokenType]stmtParser
 	comparisonOps map[lexer.TokenType]string
-	indexTypes    map[lexer.TokenType]index.IndexType
+	indexTypes    map[lexer.TokenType]types.IndexType
 	typeTokens    map[lexer.TokenType]bool
 	literalTokens map[lexer.TokenType]bool
 }
@@ -29,8 +29,8 @@ func NewSqlParser() *SqlParser {
 			lexer.EQ: "=", lexer.NE: "<>", lexer.LT: "<",
 			lexer.LE: "<=", lexer.GT: ">", lexer.GE: ">=",
 		},
-		indexTypes: map[lexer.TokenType]index.IndexType{
-			lexer.HASH: index.HASH, lexer.BTREE: index.BTREE,
+		indexTypes: map[lexer.TokenType]types.IndexType{
+			lexer.HASH: types.IndexTypeHash, lexer.BTREE: types.IndexTypeBTree,
 		},
 		typeTokens: map[lexer.TokenType]bool{
 			lexer.INT64: true, lexer.VARCHAR: true, lexer.IDENT: true,

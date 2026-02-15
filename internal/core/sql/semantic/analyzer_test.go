@@ -4,10 +4,10 @@ import (
 	"testing"
 
 	"GopherDB/internal/core/catalog/model"
-	"GopherDB/internal/core/index"
 	"GopherDB/internal/core/sql/ast"
 	"GopherDB/internal/core/sql/lexer"
 	"GopherDB/internal/core/sql/parser"
+	"GopherDB/internal/core/types"
 )
 
 type colDef struct {
@@ -88,7 +88,7 @@ func (m *mockCatalog) UpdatePagesCount(_ *model.TableDefinition, _ int32) error 
 	return nil
 }
 
-func (m *mockCatalog) CreateIndex(_, _, _ string, _ index.IndexType) (*model.IndexDefinition, error) {
+func (m *mockCatalog) CreateIndex(_, _, _ string, _ types.IndexType) (*model.IndexDefinition, error) {
 	return nil, nil
 }
 
@@ -276,7 +276,7 @@ func TestAnalyzeCreateIndex(t *testing.T) {
 	if ci.IndexName().Text() != "idx" {
 		t.Errorf("expected 'idx', got '%s'", ci.IndexName().Text())
 	}
-	if ci.IndexType() != index.BTREE {
+	if ci.IndexType() != types.IndexTypeBTree {
 		t.Errorf("expected BTREE, got %v", ci.IndexType())
 	}
 }

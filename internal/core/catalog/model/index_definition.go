@@ -3,7 +3,7 @@ package model
 import (
 	"encoding/binary"
 
-	"GopherDB/internal/core/index"
+	"GopherDB/internal/core/types"
 )
 
 type IndexDefinition struct {
@@ -12,7 +12,7 @@ type IndexDefinition struct {
 	tableOid   int32
 	columnOid  int32
 	keyTypeOid int32
-	indexType  index.IndexType
+	indexType  types.IndexType
 	fileNode   string
 	metaPageId int32
 	rootPageId int32
@@ -24,7 +24,7 @@ func NewIndexDefinition(
 	tableOid int32,
 	columnOid int32,
 	keyTypeOid int32,
-	indexType index.IndexType,
+	indexType types.IndexType,
 	fileNode string,
 	metaPageId int32,
 	rootPageId int32,
@@ -68,7 +68,7 @@ func (idx *IndexDefinition) KeyTypeOid() int32 {
 	return idx.keyTypeOid
 }
 
-func (idx *IndexDefinition) IndexType() index.IndexType {
+func (idx *IndexDefinition) IndexType() types.IndexType {
 	return idx.indexType
 }
 
@@ -175,7 +175,7 @@ func IndexDefinitionFromBytes(data []byte) (*IndexDefinition, error) {
 		tableOid:   tableOid,
 		columnOid:  columnOid,
 		keyTypeOid: keyTypeOid,
-		indexType:  index.IndexTypeFromOrdinal(int(indexTypeOrd)),
+		indexType:  types.IndexTypeFromOrdinal(int(indexTypeOrd)),
 		fileNode:   fileNode,
 		metaPageId: metaPageId,
 		rootPageId: rootPageId,

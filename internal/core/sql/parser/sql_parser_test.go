@@ -3,9 +3,9 @@ package parser
 import (
 	"testing"
 
-	"GopherDB/internal/core/index"
 	"GopherDB/internal/core/sql/ast"
 	"GopherDB/internal/core/sql/lexer"
+	"GopherDB/internal/core/types"
 )
 
 func parse(t *testing.T, sql string) ast.Statement {
@@ -29,7 +29,7 @@ func TestCreateTable(t *testing.T) {
 
 func TestCreateIndex(t *testing.T) {
 	stmt := parse(t, "CREATE INDEX idx ON users (id) USING BTREE").(*ast.CreateIndexStmt)
-	if stmt.IndexType() != index.BTREE {
+	if stmt.IndexType() != types.IndexTypeBTree {
 		t.Error("expected BTREE")
 	}
 }

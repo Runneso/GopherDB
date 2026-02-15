@@ -1,15 +1,15 @@
 package ast
 
-import "GopherDB/internal/core/index"
+import "GopherDB/internal/core/types"
 
 type CreateIndexStmt struct {
 	indexName  *SqlIdent
 	tableName  *SqlIdent
 	columnName *SqlIdent
-	indexType  index.IndexType
+	indexType  types.IndexType
 }
 
-func NewCreateIndexStmt(indexName, tableName, columnName *SqlIdent, indexType index.IndexType) *CreateIndexStmt {
+func NewCreateIndexStmt(indexName, tableName, columnName *SqlIdent, indexType types.IndexType) *CreateIndexStmt {
 	return &CreateIndexStmt{
 		indexName:  indexName,
 		tableName:  tableName,
@@ -33,6 +33,6 @@ func (stmt *CreateIndexStmt) ColumnName() *SqlIdent {
 	return stmt.columnName
 }
 
-func (stmt *CreateIndexStmt) IndexType() index.IndexType {
+func (stmt *CreateIndexStmt) IndexType() types.IndexType {
 	return stmt.indexType
 }
