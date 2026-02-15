@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"io"
@@ -15,6 +16,7 @@ import (
 	"GopherDB/internal/core/catalog/manager"
 	"GopherDB/internal/core/engine"
 	"GopherDB/internal/core/index"
+	"GopherDB/internal/core/memory/background"
 	"GopherDB/internal/core/memory/buffer"
 	"GopherDB/internal/core/sql/lexer"
 	"GopherDB/internal/core/sql/semantic"
@@ -30,18 +32,34 @@ type Server struct {
 	catalog    manager.CatalogManager
 	sqlService *engine.SqlService
 
+	dirtyWriter   *background.DefaultDirtyPageWriter
+	cancelFlush   context.CancelFunc
+	cancelCheckpt context.CancelFunc
+
 	listener net.Listener
 	running  atomic.Bool
 	wg       sync.WaitGroup
 }
 
 func NewServer(port, dataDir string, bufferPool buffer.BufferPoolManager, catalog manager.CatalogManager, indexManager *index.IndexManager) *Server {
+	const (
+		defaultFlushIntervalMs = 200
+		defaultFlushBatchSize  = 64
+		defaultCheckpointMs    = 5000
+	)
+
+	writer, err := background.NewDefaultDirtyPageWriter(bufferPool, defaultFlushIntervalMs, defaultCheckpointMs, defaultFlushBatchSize)
+	if err != nil {
+		slog.Warn("dirty page writer disabled", "error", err)
+	}
+
 	return &Server{
-		port:       port,
-		dataDir:    dataDir,
-		bufferPool: bufferPool,
-		catalog:    catalog,
-		sqlService: engine.NewSqlService(dataDir, bufferPool, catalog, indexManager),
+		port:        port,
+		dataDir:     dataDir,
+		bufferPool:  bufferPool,
+		catalog:     catalog,
+		sqlService:  engine.NewSqlService(dataDir, bufferPool, catalog, indexManager),
+		dirtyWriter: writer,
 	}
 }
 
@@ -56,6 +74,19 @@ func (server *Server) Start() error {
 		return err
 	}
 	server.listener = listener
+
+	if server.dirtyWriter != nil {
+		if cancel, err := server.dirtyWriter.StartBackgroundWriter(); err != nil {
+			slog.Warn("dirty writer start failed", "error", err)
+		} else {
+			server.cancelFlush = cancel
+		}
+		if cancel, err := server.dirtyWriter.StartCheckPointer(); err != nil {
+			slog.Warn("checkpoint start failed", "error", err)
+		} else {
+			server.cancelCheckpt = cancel
+		}
+	}
 
 	slog.Info("server started", "port", server.port, "dataDir", server.dataDir)
 
@@ -80,6 +111,13 @@ func (server *Server) Start() error {
 func (server *Server) Stop() {
 	if !server.running.CompareAndSwap(true, false) {
 		return
+	}
+
+	if server.cancelFlush != nil {
+		server.cancelFlush()
+	}
+	if server.cancelCheckpt != nil {
+		server.cancelCheckpt()
 	}
 
 	if server.listener != nil {
