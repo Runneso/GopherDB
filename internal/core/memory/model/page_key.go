@@ -5,6 +5,10 @@ type PageKey struct {
 	pageID int
 }
 
+func NewPageKey(fileID string, pageID int) PageKey {
+	return PageKey{fileID: fileID, pageID: pageID}
+}
+
 func (key *PageKey) FileID() string {
 	return key.fileID
 }
