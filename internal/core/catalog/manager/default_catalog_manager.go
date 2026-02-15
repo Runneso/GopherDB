@@ -30,8 +30,6 @@ var (
 	ErrTableNotFound  = errors.New("table not found")
 	ErrColumnNotFound = errors.New("column not found")
 	ErrIndexExists    = errors.New("index exists")
-	ErrIndexNotFound  = errors.New("index not found")
-	ErrTypeNotFound   = errors.New("type not found")
 	ErrCorruptedFile  = errors.New("corrupted catalog file")
 )
 
