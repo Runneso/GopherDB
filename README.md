@@ -25,40 +25,21 @@ Lightweight Postgres-inspired DB (HSE Data Engineering '28).
 
 ```sql
 -- Создание таблицы
-CREATE TABLE students
-(
-    id   INT64,
-    name VARCHAR
-);
+CREATE TABLE students (id INT64, name VARCHAR);
 -- Вставка данных
-INSERT INTO students
-VALUES (1, 'ramazan');
-INSERT INTO students
-VALUES (2, 'max');
+INSERT INTO students VALUES (1, 'ramazan');
+INSERT INTO students VALUES (2, 'max');
 -- Разные примеры выборки данных
-SELECT *
-FROM students;
-SELECT *
-FROM students
-WHERE id = 1;
-SELECT *
-FROM students
-WHERE name = 'max';
+SELECT * FROM students;
+SELECT * FROM students WHERE id = 1;
+SELECT * FROM students WHERE name = 'max';
 -- Создание индекса и его использование
 CREATE INDEX idx_students_id ON students (id) USING BTREE;
 CREATE INDEX idx_students_name ON students (name) USING HASH;
 -- Использование анализа выполнения запроса
-EXPLAIN
-SELECT *
-FROM students; -- SeqScan
-EXPLAIN
-SELECT *
-FROM students
-WHERE name = 'max'; -- HashIndexScan
-EXPLAIN
-SELECT *
-FROM students
-WHERE id = 1; -- BTreeIndexScan
+EXPLAIN SELECT * FROM students; -- SeqScan
+EXPLAIN SELECT * FROM students WHERE id = 1; -- BTreeIndexScan
+EXPLAIN SELECT * FROM students WHERE name = 'max'; -- HashIndexScan
 ```
 
 ## Как запустить Server/CLI
